@@ -1,0 +1,8 @@
+.git
+.idea
+.env
+target
+.DS_Store
+*.zip
+
+frontend

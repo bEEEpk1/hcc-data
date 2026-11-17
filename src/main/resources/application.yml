@@ -1,0 +1,46 @@
+server:
+  port: ${SERVER_PORT:8090}
+spring:
+  application:
+    name: hcc-data
+  datasource:
+    url: ${JDBC_URL:jdbc:postgresql://localhost:5445/hcc_data?currentSchema=hcc_data}
+    username: ${HCC_DB_APP_USER:hcc_app}
+    password: ${HCC_DB_APP_PASSWORD:}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    default-schema: hcc_data
+    schemas: hcc_data
+    user: ${HCC_DB_MIGRATOR_USER:hcc_migrator}
+    password: ${HCC_DB_MIGRATOR_PASSWORD:}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+    consumer:
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        isolation.level: read_committed
+    listener:
+      ack-mode: manual_immediate
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+hcc:
+  security:
+    mode: ${HCC_SECURITY_MODE:jwt}
+    demo:
+      supervisor-token: ${HCC_DEMO_SUPERVISOR_TOKEN:}
+      auditor-token: ${HCC_DEMO_AUDITOR_TOKEN:}
+  kafka:
+    topics:
+      core: ${HCC_TOPIC_CORE:hcc.core.events,hcc.audit.events.v1}
+      auth: ${HCC_TOPIC_AUTH:hcc.auth.events}
+logging:
+  level:
+    root: INFO
+    ru.hcc.data: INFO
